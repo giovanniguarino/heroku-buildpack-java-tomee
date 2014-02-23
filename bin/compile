@@ -51,6 +51,20 @@ echo " done"
 # change to cache dir to install maven
 cd $CACHE_DIR
 
+# install Apache TomEE
+TOMEE_V="1.6.0"
+TOMEE_URL="http://mirrors.ibiblio.org/apache/tomee/tomee-${TOMEE_V}/apache-tomee-${TOMEE_V}-jaxrs.tar.gz"
+if [ ! -d tomee ]; then
+  echo -n "-----> Installing Apache TomEE JAX-RS ${TOMEE_V}..."
+  curl --silent --location $TOMEE_URL | tar xz
+  mv apache-tomee-jaxrs-${TOMEE_V} $BUILD_DIR/tomee
+  rm -rf $BUILD_DIR/tomee/webapps/*
+  chmod +x $BUILD_DIR/tomee/bin/*.sh
+  echo " done"
+else
+  echo "-----> TomEE already present"
+fi
+
 # install maven with base repository
 MAVEN_URL="http://s3.amazonaws.com/heroku-jvm-langpack-java/maven.tar.gz"
 
