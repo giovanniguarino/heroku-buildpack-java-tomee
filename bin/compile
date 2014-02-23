@@ -58,7 +58,7 @@ if [ ! -d tomee ]; then
   echo -n "-----> Installing Apache TomEE JAX-RS ${TOMEE_V}..."
   curl --silent --location $TOMEE_URL | tar xz
   mv apache-tomee-jaxrs-${TOMEE_V} $BUILD_DIR/tomee
-  rm -rf $BUILD_DIR/tomee/webapps/*
+  # rm -rf $BUILD_DIR/tomee/webapps/*
   chmod +x $BUILD_DIR/tomee/bin/*.sh
   echo " done"
 else
