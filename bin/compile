@@ -61,8 +61,12 @@ if [ ! -d tomee ]; then
   echo -n "-----> Installing Apache TomEE JAX-RS ${TOMEE_V}..."
   curl --silent --location $TOMEE_URL | tar xz
   mv apache-tomee-jaxrs-${TOMEE_V} $BUILD_DIR/tomee
-  # rm -rf $BUILD_DIR/tomee/webapps/*
+  rm -rf $BUILD_DIR/tomee/webapps/*
   chmod +x $BUILD_DIR/tomee/bin/*.sh
+  echo " done"
+  echo -n "-----> Making TomEE sensitive to heroku 'PORT'..."
+  sed -e 's/port="8080"/port="<herokuPort>"/' $BUILD_DIR/tomee/conf/server.xml > $BUILD_DIR/tomee/conf/server.ask.xml
+  sed -e 's/port=8080/port=<herokuPort>/' $BUILD_DIR/tomee/bin/tomee.sh > $BUILD_DIR/tomee/bin/tomee.ask.sh
   echo " done"
 else
   echo "-----> TomEE already present"
@@ -113,6 +117,24 @@ if [ "true" == $KEEP_M2_CACHE ]; then
   for DIR in ".m2" ".maven" ; do
     cp -r $CACHE_DIR/$DIR $DIR
   done
+fi
+
+# create the startup script if not exist
+if [ ! -f ${BUILD_DIR}/startup.tomee.sh ]; then
+cat > ${BUILD_DIR}/startup.tomee.sh << "eof"
+sed -e "s/<herokuPort>/${PORT}/" tomee/conf/server.ask.xml > tomee/conf/server.xml
+sed -e "s/<herokuPort>/${PORT}/" tomee/bin/tomee.ask.sh > tomee/bin/tomee.sh
+cd tomee/bin
+./catalina.sh start
+eof
+chmod +x ${BUILD_DIR}/startup.tomee.sh
+fi
+
+# create Procfile if not exist
+if [ ! -f ${BUILD_DIR}/Procfile ]; then
+cat > ${BUILD_DIR}/Procfile << "eof"
+web: sh startup.tomee.sh
+eof
 fi
 
 PROFILE_PATH="$BUILD_DIR/.profile.d/java.sh"
