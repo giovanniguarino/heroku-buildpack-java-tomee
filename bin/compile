@@ -29,6 +29,9 @@ elif [ -f $CACHE_DIR/removeM2Cache ]; then
   KEEP_M2_CACHE="false"
 fi
 
+# force keep maven for TomEE...
+KEEP_M2_CACHE="true"
+
 if [ "true" == $KEEP_M2_CACHE ]; then
   logger -p user.notice -t "slugc[$$]" "language_pack_java retain_m2_repo"
 fi
