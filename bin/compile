@@ -55,8 +55,9 @@ echo " done"
 cd $CACHE_DIR
 
 # install Apache TomEE
-TOMEE_V="1.6.0"
+TOMEE_V="1.7.0"
 TOMEE_URL="http://mirrors.ibiblio.org/apache/tomee/tomee-${TOMEE_V}/apache-tomee-${TOMEE_V}-jaxrs.tar.gz"
+echo TOMEE_URL
 if [ ! -d tomee ]; then
   echo -n "-----> Installing Apache TomEE JAX-RS ${TOMEE_V}..."
   curl --silent --location $TOMEE_URL | tar xz
